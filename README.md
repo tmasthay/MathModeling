@@ -12,7 +12,9 @@ Topics covered below.
 6. (List currently incomplete...will return to this later for more cohesive order)
 
 # Generating the PDF
-The easiest way to generate the pdf is to import this project directly into Overleaf. It uses a template for Springer books that can be found on Overleaf's template page; I may change this in the future. If I do change this, and you prefer a Springer-style format, checkout the initial commit.
+A read-only version of this project can be found at https://www.overleaf.com/read/pnfwcgqdhgsv.
+
+If you would like to make build this project directly, the easiest way is to import it directly into Overleaf, as this is the only environment under which I have tested this build. The compiler used on Overleaf is pdfLatex.
 
 # Code Examples
 All example codes are in the ```code``` directory.
