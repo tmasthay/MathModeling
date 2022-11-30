@@ -10,6 +10,11 @@ The easiest way to generate the pdf is to import this project directly into Over
 All example codes are in the ```code``` directory.
 
 # Author Contact
-We welcome any suggestions for (a) what topics you would like to see covered in more detail, (b) examples with code, and/or (c) ideas for illustrative problems and/or coding assigments that would augment this course's learning objectives.
+Please contact me at tyler@oden.utexas.edu or tylermasthay@gmail.com for any suggestions as stated below.
 
-Please contact me at tyler@oden.utexas.edu or tylermasthay@gmail.com for any suggestions as stated above.
+1. Topics you would like to see covered.
+2. Examples with code
+3. Ideas for illustrative problems and/or coding assigments that would augment this course's learning objectives.
+4. Typos and errata!
+
+
