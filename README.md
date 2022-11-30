@@ -12,7 +12,7 @@ Topics covered below.
 6. (List currently incomplete...will return to this later for more cohesive order)
 
 # Status
-Note that this project is still an incomplete set of notes, with roughly 60% coverage as of November 30, 2022.
+Note that this project is still an incomplete set of notes, with roughly 50% coverage as of November 30, 2022.
 
 # Generating the PDF
 A read-only version of this project can be found at https://www.overleaf.com/read/pnfwcgqdhgsv.
