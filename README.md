@@ -11,4 +11,5 @@ All example codes are in the \texttt{code} directory.
 
 # Author Contact
 We welcome any suggestions for (a) what topics you would like to see covered in more detail, (b) examples with code, and/or (c) ideas for illustrative problems and/or coding assigments that would augment this course's learning objectives.
+
 Please contact me at tyler@oden.utexas.edu or tylermasthay@gmail.com for any suggestions as stated above.
