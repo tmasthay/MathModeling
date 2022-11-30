@@ -1,0 +1,23 @@
+\chapter{Lecture 13}
+We begin with a few remarks regarding ROM. We typically have a sparse structure in our original problem that we are reducing\footnote{Because we are typically looking at a matrix equation arising from the discretization of a PDE. Since differentiation is a local operator, we typically see sparse matrices.}. However, this sparse structure is lose when we take the SVD or EVD. This loss of sparsity means that we can only justify attempting a reduced-order model if either (a) the order of the problem is drastically reduced or (b) the order is moderately reduced but is applied to many right hand sides to where the loss of sparsity is worth the tradeoff. However, in special cases, the sparsity can be preserved, which is ideal.
+
+\section{Example: Preservation of sparsity in multiscale FEM}
+Consider the following model equation.
+\begin{align} \label{eqn:13:model}
+-\frac{d}{dx} \left( a(\frac{x}{\epsilon}) \frac{du_{\epsilon}}{dx} \right) = f.
+\end{align}
+We assume $a$ is oscillatory. Multiscale FEM uses a reduced basis $\mathcal{C} := \{\psi_{k}\}$ ($\mathcal{C}$ here denotes ``coarse'') with $h_{\psi} \gg h_{\phi}$ where $\mathcal{F} := \{\phi_{j}\}$ ($\mathcal{F}$ here denotes ``fine'')is a reference basis and the support of each basis function is $O(h_{\psi}),O(h_{\phi})$ for $\{\psi_{k}\}, \{\phi_{j}\}$, respectively. Also, $\psi_{k}$ is typically a linear combination of the elements of $\mathcal{F}$ for each $k$. The coarse basis $\mathcal{C}$ is used to cheaper solve for coarse-scale structure and $\mathcal{F}$ for fine-scale structure, illustrated in Figure \ref{fig:13:multiscalefem}. Since each basis still has local support, the sparsity is preserved for the coarse-scale operation. This approach has gain only when considering many right hand sides $\bs{f}$ since we only have to solve the matrix equation recovering $\mathcal{C}$ from $\mathcal{F}$ once, independent of the number of right hand sides we have. \askbjorn{Is the gain from the fact that we use the same approach in the matrix solve as outlined in previous lectures?} 
+\begin{figure}
+    \centering
+    \includegraphics{images/x.pdf}
+    \caption{Want a simple hat function with a bunch of oscillations in it. The coarse basis will be the hat function and the fine basis is able to capture the intermediate oscillations.}
+    \label{fig:13:multiscalefem}
+\end{figure}
+Extensions to this idea exist in higher dimensions. However, the geometry of extracting a coarser basis gets markedly more complicated even in two dimensions, so we omit for the sake of this course. \askbjorn{Any references for students who may be interested in this?}
+
+\section{Example: Maxwell's Equation}
+Another example where sparsity can be preserved is with boundary integral equation (BIE). In short, boundary integral equations solve an $(n+1)$-dimensional problem by using Green's theorem to reduce to an $n$-dimensional problem on the boundary of the domain of interest. A finite-difference discretization of the problem will lead to a sparse matrix inversion problem. When pulled onto the boundary via Green's Theorem, we get a dense problem but with less degrees of freedom. For any point $x$ in the domain, we can calculate via an appropriate Green's function that
+\begin{align} \label{eqn:13:BIE}
+    \rho(x) = \int_{\Gamma} K(x,y) \rho(y) dy
+\end{align}
+where $\Gamma = \partial \Omega$ is the boundary of domain $\Omega$. However, we can then approximate this kernel evaluation with the fast multipole method which leads to a sparse compression. Overall, then we can reduce a three-dimensional sparse matrix inversion problem to a sparse two-dimensional sparse \textbf{matvec}! This is a huge reduction in complexity. We note that knowledge of the Green's function is necessary to apply a BIE formulation, restricting the class of problems for which it can be applied. However, we note that it is reasonable approximation for air to be a homogeneous medium, which means that this method can be applied to wireless communication, given that the Green's function for a homogeneous medium is known.

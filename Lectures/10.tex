@@ -1,0 +1,24 @@
+\chapter{Lecture 10}
+\section{\tcr{A bit confused on this part, related to homogenization}}
+
+\section{Outline of Future Lectures}
+Next lecture will be our last class that covers mapping models to other models. We will move onto the following topics:
+\begin{itemize}
+    \item Model reduction
+    \item Reduced-order modeling
+    \item Metamodels
+    \item Surrogate models.
+\end{itemize}
+These topics are similar to each other and a large extent, are really the same thing under a different name \askbjorn{double check that my understanding is correct, items 1,2, and 4 seem essentially the same, but I'm unsure about item 3}. The goal of these approaches is to map a complex model to a simpler one. For example, rather than capturing the full solution to a PDE, we can approximate it best the best rank $r$ approximation for small $r$ via a singular-value decomposition. Some important aspects to keep in mind when performing such a reduction are listed below.
+\begin{itemize}
+    \item Reduced accuracy of the solution
+    \item Reduced-order model should preserve important solution properties, e.g., conservation of mass
+    \item Reduced-order model should preserve well-posedness
+\end{itemize}
+Some common techniques include
+\begin{itemize}
+    \item Projection onto a lower-dimensional subspace, e.g., truncated SVD
+    \item \tcr{Exploit par. dep. --> ``parametric dependence''?}
+    \item Divide solution into online and offline calculation\footnote{\tcr{Expand explanation here in footnote. Basically, you want your online stage to be a simpler model, e.g., a homogenized form of the equation}}.
+    \item Exploit small parameters after transformation, e.g., setting small singular values to $0$, dropping a term from differential equation as negligible, etc.
+\end{itemize}

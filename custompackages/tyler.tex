@@ -1,0 +1,58 @@
+%Simple shortcut commands
+\newcommand{\pint}[3]{\int_{#1} \left( #2 \right) d#3}
+\newcommand{\sint}[3]{\int_{#1} #2 \hspace{3pt} d#3}
+\newcommand{\bs}[1]{\boldsymbol{#1}}
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\mc}[1]{\mathcal{#1}}
+\newcommand{\tu}[1]{\textup{#1}}
+\newcommand{\mbb}[1]{\mathbb{#1}}
+\newcommand{\argmin}[1]{\underset{#1}{\textup{arg min }}}
+\newcommand{\tbf}[1]{\textbf{#1}}
+\newcommand{\tbfr}[1]{\textbf{\textcolor{red}{#1}}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\PR}{\mathbb{P}}
+\newcommand{\N}{\mathbb{N}}
+%\newcommand{\E}{\mathbb{E}}
+\newcommand{\EE}[1]{\mathbb{E}\left[#1\right]}
+\newcommand{\indprob}[1]{\mathds{1}_{\left\{#1\right\}}}
+\newcommand{\inwedge}[1]{\langle #1 \rangle}
+\newcommand{\ncc}[4]{\textcolor{#1}{#3}\textcolor{#2}{#4}}
+\newcommand{\nccc}[6]{\ncc{#1}{#2}{#4}{#5}\textcolor{#3}{#6}}
+\newcommand{\ncccc}[8]{\ncc{#1}{#2}{#5}{#6}\ncc{#3}{#4}{#7}{#8}}
+\newcommand{\tc}[2]{\textcolor{#1}{#2}}
+\newcommand{\tcr}[1]{\textcolor{red}{#1}}
+\newcommand{\tcc}[1]{\texcolor{violet}{#1}}
+\newcommand{\q}[1]{``#1''}
+\newcommand{\bt}[1]{\textbf{#1}}
+\newcommand{\txt}[1]{\textup{#1}}
+\newcommand{\pref}[1]{(\ref{#1})}
+
+\newcommand\subt[1]{%
+  \pgfmathparse{#1-1}\pgfmathresult%
+}
+
+\newcommand{\cbeqn}[2]{
+\begin{empheq}[box=\tcbhighmath]{gather}
+ \textbf{#1} \nonumber \\
+ #2
+\end{empheq}
+}
+
+\newcommand{\bjorn}{Bj\"{o}rn}
+\newcommand{\askbjorn}[1]{\textcolor{red}{Ask \bjorn: #1}}
+
+%More complicated commands found on Internet
+\newcommand*\widefbox[1]{\fbox{\hspace{2em}#1\hspace{2em}}}
+\newcommand{\rpm}{\sbox0{$1$}\sbox2{$\scriptstyle\pm$}
+  \raise\dimexpr(\ht0-\ht2)/2\relax\box2 }
+ 
+%Custom environments
+\newenvironment{ceqn}
+    {\begin{equation}
+    \begin{aligned}
+    }
+    { 
+    \end{aligned} 
+    \end{equation}
+    }
+    

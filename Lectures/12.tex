@@ -1,0 +1,57 @@
+\chapter{Lecture 12}
+In this lecture, we continue with our discussion of reduced-order models which are a method of mapping models to models. In this lecture, we look at problems where we seek a reduced basis that represents the solution to our problem as well as projections into that basis. Examples of such projections include the singular-value decomposition, eigenbases, Krylov-subspace methods, and the Hankel transform.
+
+\section{Example: Wavelet Transform}
+Consider the linear system of equations
+\begin{align} \label{eqn:12:linear}
+\bs{L} \bs{u} = \bs{f}
+\end{align}
+Let $W$ be the matrix representing a wavelet transform. Since $W$ is unitary, we can rewrite
+\begin{align} \label{eqn:12:waveletlinear}
+\bs{W}\bs{L}\bs{W}^{*} \tilde{\bs{u}} &= \bs{\tilde{f}}
+\end{align}
+with $\tilde{\bs{u}} = \bs{W} \bs{u}$ and $\bs{\tilde{f}} = \bs{W}\bs{f}$. Since $\bs{\tilde{f}}$ is now in the wavelet basis, we can reshuffle its components so that its high-frequency components appear first. That is, we can use a unitary $\bs{Q}$ so that
+\begin{align} \label{eqn:12:unitary}
+\bs{Q} \bs{W} \bs{L} \bs{W}^{*} \bs{Q} \bs{\bar{u}} &= \bs{\bar{f}}
+\end{align}
+where $\bs{\bar{f}} = \bs{Q} \bs{\tilde{f}} = \bs{Q} \bs{W} \bs{f}$ and $\bs{\bar{u}} = \bs{Q} \bs{\tilde{u}} = \bs{Q} \bs{W} \bs{u}$. Finally, rewrite Equation \ref{eqn:12:unitary} as
+\begin{align}
+\begin{bmatrix}
+\bs{A} & \bs{B} \\
+\bs{C} & \bs{D}
+\end{bmatrix} \begin{bmatrix}
+    \bs{u}_{H} \\
+    \bs{u}_{L}
+\end{bmatrix} &= \begin{bmatrix}
+\bs{f}_{H} \\
+\bs{f}_{L}
+\end{bmatrix} \\
+\bs{u}_{H}, \bs{f}_{H} \in \R^{n_1} \\
+\bs{u}_{L}, \bs{f}_{L} \in \R^{n_2}
+\end{align}
+with $n_1 \gg n_2$ and 
+\begin{align}
+    \begin{bmatrix}
+    \bs{A} & \bs{B} \\
+    \bs{C} & \bs{D}
+    \end{bmatrix} = \bs{Q} \bs{W} \bs{L} \bs{W}^{*} \bs{Q}^{*}.
+\end{align}
+Here, we use the subscript $H$ to mean ``high frequency'' and $L$ to mean ``low frequency.'' Typically, noise lies in the high-frequency range, and so we are only interested in solving for $u_L$ and throwing away $u_H$, even though $dim(u_H) \gg dim(u_L)$!
+From here, we can apply the same online/offline strategy outlined in the previous lecture. Again this approach is of practical use for many right hand sides $\bs{u}_L$.
+
+\section{Example: Control Theory}
+Consider Equation \ref{eqn:11:controlODE} from Lecture 11. We begin in the case when $f,g$ are linear. Then Equation \ref{eqn:11:controlODE} becomes
+\begin{ceqn} \label{eqn:12:linearcontrol}
+\dot{\bs{x}}(t) &= \bs{A} \bs{x}(t) + \bs{B} \bs{u}(t) \\
+y(t) &= \bs{C} \bs{x}(t) + \bs{D} \bs{u}(t)
+\end{ceqn}
+with $dim(\bs{x}) \gg dim(\bs{y})$. Consider the case when $\bs{B} = \bs{D} = \bs{0}$ so that we have the further reduction
+\begin{align} 
+\dot{\bs{x}}(t) &= \bs{A} \bs{x}(t) \label{eqn:12:nou1} \\
+\bs{y}(t) &= \bs{C} \bs{x}(t) \label{eqn:12:nou2}
+\end{align}
+We note that Equation \ref{eqn:12:nou2} leads to a drastic dimensionality reduction through the matrix $\bs{C}$. Is there any way that we can incorporate $\bs{C}$ into Equation \ref{eqn:12:nou1} to lead to an overall complexity reduction? We can see through straightforward algebra that
+\begin{align} \label{eqn:12:reducey}
+\dot{\bs{y}}(t) &= \bs{C} \bs{A} \bs{x}(t).
+\end{align}
+Note that the right-hand side of Equation \ref{eqn:12:reducey} does not have $\bs{y}$, so we do not see a direct dimensionality reduction from this equation, and for general $\bs{A}$, we cannot expect any reduction.   

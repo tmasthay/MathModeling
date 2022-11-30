@@ -1,0 +1,103 @@
+\chapter{Lecture 17}
+We continue our discussion of UQ from last lecture.
+\section{Analytic Methods Continued}
+Consider the stochastic differential equation
+\begin{ceqn} \label{eqn:17:sde}
+    y'(t) &= f(y(t)) + r(t) \\
+    y(0) &= y_0.
+\end{ceqn}
+For simplicity, set $f \equiv 0$. Since $r(t)$ is not continuous, Equation \eqref{eqn:17:sde} does not make sense. We must, therefore, cast to a properly defined stochastic differential equation with \^{I}to calculus as
+\begin{align} \label{eqn:17:ito}
+    dF_{t} = \sigma(F_t) dW_t \overset{const.}{=} \sigma dW_t.
+\end{align}
+This stochastic differential equation can be recast to the Fokker-Planck Equation, stated below.
+\cbeqn{Fokker-Planck Equation}{
+    \frac{\partial}{\partial t}\left( r_{F}(x,t) \right) = \frac{\partial^2}{\partial x^2} \left( \sigma^2 r_{F}(x,t) \right) \label{eqn:17:fokker}
+} 
+Here, $r_{F}$ is a probability density function that describes the stochastic process $F$. \askbjorn{should I comment on why we have two variables here? I don't recall why we have two variables.} Equation \eqref{eqn:17:ito} solves for a specific trajectory of the stochastic process $F_t$. Therefore, to get a picture of this process, we must perform a Monte Carlo simulation. However, the Fokker-Planck equation \textit{directly} solves for the PDF that describes $F$! This is another example of a mapping from a model to another model. 
+
+\section{Monte Carlo Continued}
+\subsection{Importance Sampling}
+Consider $Z = X + Y$ where $X \sim U(0,1)$ and $Y \sim U(2,3)$ with $X$ and $Y$ independent. If we want to approximate $Z$, sampling from intervals outside of $[0,1] \cup [2,3]$ gives us less information than sampling from $[0,1]\cup[2,3]$...\askbjorn{This would be illustrative example, but you have to make sure you think about the sample space properly.}
+
+Now let us consider the slightly more complicated example of Monte Carlo integration. That is, we want to compute the value $\mathbb{E}\left[ f(X) \right]$ as 
+\begin{align} \label{eqn:17:MCint}
+    \int_{\Omega} f(x) dx \approx S_{N} := \frac{|\Omega|}{N} \sum_{n=1}^{N} f(x_n)
+\end{align}
+where $\Omega$ is our sample space and $x_n$ are selected uniformly from $\Omega$ and in i.i.d. fashion, i.e. $X \sim U(\Omega)$ (\askbjorn{cross reference this}). The sample standard deivation estimates the error of this calculation. That is,
+\begin{align} \label{eqn:err_importance}
+    \left|\EE{f(X)} - S_{N}\right| \sim \sqrt{\frac{Var(f)}{N}}.
+\end{align}
+Importance sampling is based off simply considering a different form of Equation \eqref{eqn:err_importance} as
+\begin{align} \label{eqn:err_controlvar}
+\left|\EE{\frac{f(X)}{g(X)}} - S_{N} \right| \sim \sqrt{\frac{1}{N} Var\left[\frac{f(X)}{g(X)}\right]}.
+\end{align}
+Note that whenever $g \approx f$, we have that 
+\begin{align*}
+    Var\left[\frac{f(X)}{g(X)}\right] < Var(f(X)).
+\end{align*}
+If $g$ is chosen appropriately, we may reduce the variance for a given computational cost budget. \askbjorn{Insert figure that you did for Richard Tsai's class that illustrates this}. We can rewrite
+\begin{ceqn} \label{eqn:17:stieltjes}
+\int_{\Omega} f(x) dx &= \int_{\Omega} \frac{f(x)}{g(x)} g(x) dx \\
+&= \int_{\Omega} \frac{f(x)}{g(x)} \underbrace{d\mu_{g}(x)}_{\textup{Stieltjes}} \\
+&\approx \frac{|\Omega|}{N} \sum_{n=1}^{N} \frac{f(x_n)}{g(x_n)}.
+\end{ceqn}
+In Equation \eqref{eqn:17:stieltjes}, the $x_n$ are now i.i.d. samples taken from the measure $\mu_g$. This alternative sampling from $\mu_g$ picks out the more \q{important} regions that characterize the distribution than a uniform sampling and thus motivates the phrase \q{importance sampling.} Another related term to Google is \textbf{control variates} \askbjorn{Is this correct? Is there a difference between control variates and importance sampling?}
+
+Note that in the case that $g=f$, we get zero variance and we immediately recover the correct answer. However, in Equation \eqref{eqn:17:stieltjes}, we must sample from $\mu_{g}=\mu_{f}$ $N$ times. However, this presupposes that the value of the integral is known a priori and is thus useless. \askbjorn{There seems an inconsistency here...I am misunderstanding something now or misunderstood something said during lecture}. 
+
+An example where importance sampling is used is with exit polls. \askbjorn{Create figure for this.}
+
+Another example is uncertainty quantification for rare events. For hurricanes, you would ideally take $g$ to be under warmer conditions to bias towards hurricane formation.
+
+\section{Multilevel Monte Carlo}
+Mulitilevel Monte Carlo (MLMC) is a variance reduction technique that allows for possibly greater gains than the previous section regarding importance sampling.
+Say we want to estimate the mean of a given random variable $X$ from which sampling is an expensive operation.
+This can be achieved directly by simply taking $N$ samples as we discussed in the previous section. That is,
+\begin{align} \label{eqn:17:directmlmc}
+\EE{X} \approx S_N \approx \frac{1}{N} \sum_{n=1}^{N} X(x_n)
+\end{align}
+where $x_n \in \Omega$ is chosen uniformly from the sample space $\Omega$. 
+Note that
+\begin{align*}
+    Var(S_N) = \frac{Var(X)}{N}
+\end{align*}
+and so we have that
+\begin{align} \label{eqn:17:rms}
+\EE{(X-S_N)^2} &= Var(S_N) = \frac{Var(X)}{N} = O\left(\frac{1}{N}\right).
+\end{align}
+This leads to a fundamental Monte Carlo result that
+\cbeqn{Na\"{i}ve Monte Carlo RMS Error}{
+    E_{rms} := \sqrt{\EE{(X-S_N)^2}} = \sqrt{\frac{Var(X)}{N}} = O(N^{-1/2}) \label{eqn:17:mcrms}
+} 
+If we would like to think of how many samples we must use to get a specified error, we have a simple corollary stated below.
+\cbeqn{Na\"{i}ve MC RMS cost estimate}{
+    \textup{For } E_{rms} \leq \epsilon, \textup{ we must take } N=O(\epsilon^{-2}) \textup{ samples.}
+}
+Our goal with MLMC is to improve upon the cost associated with Equation \eqref{eqn:17:mcrms}. 
+Define a sequence of approximations to $X$ as $X_0,...,X_L$ where $X_{l-1} \approx X_{l}$ and $X_L=X$.
+Then we can simply write the telescopic sum 
+\begin{align} \label{eqn:17:telescope}
+    \EE{X} = \EE{X_{N}} = \EE{X_0} + \sum_{l=1}^{L} \EE{X_{l} - X_{l-1}}.
+\end{align}
+From here, we can derive the unbiased estimator
+\begin{align} \label{eqn:17:estimate}
+    \hat{X} = \hat{X}(N_0,N_1,...,N_L) = \frac{1}{N_0} \sum_{n=1}^{N_0} X_{0}^{(0,n)} + \sum_{l=1}^{L}\left[ \frac{1}{N_l} \sum_{l=1}^{N_l} \left(X_{l}^{(l,n)} - X_{l-1}^{(l,n)}\right) \right].
+\end{align}
+Our question of interest now is \q{for a fixed RMS error $\epsilon$, what choice of $N_0,...,N_L$ will lead to the least computational cost?} The optimal choice is given by
+\begin{ceqn} \label{eqn:17:mlmcchoice}
+    N_{l} &= \mu \sqrt{\frac{V_l}{C_l}} \\
+    \mu &= \frac{1}{\epsilon^2} \sum_{l=0}^{L} \sqrt{V_l C_l}.
+\end{ceqn}
+Equation \eqref{eqn:17:mlmcchoice} leads to a total cost of 
+\cbeqn{MLMC computational cost estimate}{
+    \textup{For } E_{rms} \leq \epsilon, \textup{ cost } C=\epsilon^{-2} \left( \sum_{l=0}^{L} \sqrt{V_l C_l} \right)^2 \label{eqn:17:mlmccost}
+}
+Equation \eqref{eqn:17:mlmcchoice} implies the following savings expressed as a ratio of the MLMC cost, $C_{MLMC}$, and the traditional, direct Monte Carlo estimation cost, $C_{MC}$.
+\cbeqn{MLMC Savings - First Level Dominant}{
+    V_0 C_0 \textup{ dominant in Equation } \eqref{eqn:17:mlmccost} \Rightarrow \frac{C_{MLMC}}{C_{MC}} \approx \frac{V_L}{V_0} \label{eqn:17:mlmcsavfirst} 
+}
+\cbeqn{MLMC Savings - Last Level Dominant}{
+    V_L C_L \textup{ dominant in Equation } \eqref{eqn:17:mlmccost} \Rightarrow \frac{C_{MLMC}}{C_{MC}} = \frac{C_0}{C_L} 
+}
+Equations \eqref{eqn:17:mlmcsavfirst} and \eqref{eqn:17:mlmccost} will express savings whenever our equation is less than unity. By design, we choose $C_0 < C_1 < C_2 < ... < C_L$ and $V_0 > V_1 > V_2 > ... > V_L$. This relationship is inverted because to observe less variance, we typically need more samples. However, we note that if these constraints are not met in practice, then we will not expect MLMC to give us any computational savings. More details on this topic can be found in the paper \textit3{Multilevel Monte Carlo Methods} by Michael Giles. 

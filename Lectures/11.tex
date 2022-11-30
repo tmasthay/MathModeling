@@ -1,0 +1,48 @@
+\chapter{Lecture 11}
+Continuing from the end of last lecture, we go into more detail on reduced-order modeling.
+
+\section{Example: Fast Models in Control Theory}
+We consider the following ODE that is typical of control theory.
+\begin{ceqn} \label{eqn:11:controlODE}
+\dot{x}(t) &= f(x(t), u(t)) \\
+y(t) = g(x(t), u(t)).
+\end{ceqn}
+In our context, $u,y$ are low dimensional and $x$ is high dimensional. For example, $x$ could be the temperature field of an entire building, $u$ the internals of a thermostat device, and $y$ a switch to change the thermostat state. Fast models in control theory exploit this dimensionality difference to create fast solvers for $y$. Note that $y$ is the value of most direct interest since it is the only thing we have direct control over in the context of control theory. $y$ will usually represent something such as a light switch, a joystick for something such as a crane, a thermostat control, etc.
+
+\section{Example: Linear System}
+Reduced-order modeling is often applied to solving PDEs whose solution ultimately reduces to solving a linear system. Therefore, let's look simply at a linear system with a setup typical of one that might be seen in the context of a PDE. 
+\begin{ceqn} \label{eqn:11:linear}
+\bs{L} \bs{x} &= \bs{f} \\
+\begin{bmatrix}
+\bs{A} & \bs{B} \\
+\bs{C} & \bs{D}
+\end{bmatrix}\begin{bmatrix}
+\bs{x}_{1} \\
+\bs{x}_{2}
+\end{bmatrix} &= \begin{bmatrix}
+    \bs{f}_{1} \\
+    \bs{f}_{2}
+\end{bmatrix} \\
+\bs{x}_1 \in \R^{m_1},& \textup{ } \bs{x}_2 \in \R^{m_2}  \\
+\bs{f}_1 \in \R^{n_1},& \textup{ } \bs{f}_2 \in \R^{n_2}.
+\end{ceqn}
+In our context, we assume $m_1 \gg m_2$. This leads to the following two equations.
+\begin{align} 
+\bs{A} \bs{x}_1 + \bs{B} \bs{x}_2 &= \bs{f}_1 
+    \label{eqn:11:blockbreak1} \\
+\bs{C} \bs{x}_{1} + \bs{D} \bs{x}_2 &= \bs{f}_2.
+    \label{eqn:11:blockbreak2}
+\end{align}
+The solution to Equation \ref{eqn:11:blockbreak1} is
+\begin{align} \label{eqn:11:blockbreak1soln}
+\bs{x}_1 &= \bs{A}^{-1} \left( \bs{f}_{1} - B \bs{x}_2 \right).
+\end{align}
+Plugging Equation \ref{eqn:11:blockbreak1soln} into Equation \ref{eqn:11:blockbreak2} gives
+\begin{align} \label{eqn:11:blockbreak2soln}
+\left( \bs{D} - \bs{C} \bs{A}^{-1} \bs{B} \right) \bs{x}_{2} &= \bs{f}_2 - \bs{C} \bs{A}^{-1} \bs{f}_1.
+\end{align}
+Note that $\bs{A}$ is a large matrix, so we want to compute with it as little as possible. Therefore, we compute $\bs{D} - \bs{C} \bs{A}^{-1} \bs{B}$ and $\bs{C} \bs{A}^{-1}$ offline and then solve Equation \ref{eqn:11:blockbreak2soln} online. This will have significant savings in the case when we have many right hand sides of the form Equation \ref{eqn:11:blockbreak2soln}, otherwise it will likely not be worth performing this strategy. Note further that in the case that $A$ is too large to store, we can still perform this online/offline approach if we only know the action of $A$. For each column of $\bs{b}_i$ of $B$, we can solve the equation
+\begin{align} \label{eqn:11:toolarge}
+\bs{A} \bs{u}_{i} = \bs{b}_i
+\end{align}
+via an appropriate iterative solver, e.g., a Krylov subspace method such as GMRES.

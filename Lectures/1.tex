@@ -1,0 +1,78 @@
+%%%%%%%%%%%%%%%%%%%%% chapter.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% sample chapter
+%
+% Use this file as a template for your own input.
+%
+%%%%%%%%%%%%%%%%%%%%%%%% Springer-Verlag %%%%%%%%%%%%%%%%%%%%%%%%%%
+%\motto{Use the template \emph{chapter.tex} to style the various elements of your chapter content.}
+\chapter{Lecture 1: Course Outline and Toy Model}
+\date{January 19, 2022}
+\label{intro} % Always give a unique label
+% use \chaptermark{}
+% to alter or adjust the chapter heading in the running head
+
+%\abstract*{Each chapter should be preceded by an abstract (no more than 200 words) that summarizes the content. The abstract will appear \textit{online} at \url{www.SpringerLink.com} and be available with unrestricted access. This allows unregistered users to read the abstract as a teaser for the complete chapter.
+%Please use the 'starred' version of the new \texttt{abstract} command for typesetting the text of the online abstracts (cf. source file of this chapter template \texttt{abstract}) and include them with the source files of your manuscript. Use the plain \texttt{abstract} command if the abstract is also to appear in the printed version of the book.}
+
+\abstract{We outline the course objectives and topics. We will analyze a toy model for the spread of infectious disease and of traffic flow.}
+
+\section{Course Outline}
+\label{sec:1}
+In this course, we will focus on basic principles of mathematical modeling in contrast to courses that concentrate on methods tailored to specific classes of applications. \tc{red}{Reword slide ending in social sciences and finance}
+
+\section{The Modeling Process}
+Broadly speaking, the modeling process falls into three categories: \bt{physics-based modeling}, \bt{data-driven modeling}, and \bt{model reduction}. In our context, a \q{physics-based model} is meant to encompass a larger space of models than one would typically apply the term \q{physics} to. \tcr{By physics-based model, we mean...cause and effect is not a great description...skip data driven approach for now also}. Model reduction involves the generation of a less complex model from a more complex model. For example, if our model is given by a matrix $A \in \R^{n\times n}$, we can reduce this model to a matrix $B \in \R^{r \times r}$ to be the best rank $r$ approximation of $A$, i.e. the truncated SVD of $A$ of order $r$. 
+
+\subsection{Physics-based Modeling}
+\tcr{Let us come back to this whole section for later.}
+
+\section{Relevant Properties of the Mathematical Model}
+The three main properties we will discuss are well-posedness (model must make sense), complexity (model should not be overly complicated), and model-data interaction (model and data must match).
+\subsection{Well-posedness}
+Well-posedness consists of three classical conditions that must be satisfied. These are (a) existence of a solution for all model parameters, (b) uniqueness, i.e. that there exists one and only solution for any given model parameter, and (c) continuous dependence on data, i.e. small perturbations in parameter space lead to small perturbations in output space. If conditions (a), (b), and (c) hold, then our model is as well-behaved as we would reasonably expect. In practice, we may have one of these conditions not hold. 
+\subsubsection{Existence}
+Lack of existence is possibly the worst condition to not have satisfied. An example of this may occur when we have an overdetermined system, as can be the case for a passive advection model where concentrations are measured at both inflow and outflow.
+\subsubsection{Uniqueness}
+Uniqueness is necessary to be able to assess model quality, in some sense. Let us define our model as a relation $M \subseteq A \times B$ for parameter space $A$ and output space $B$. Uniqueness says that $M$ is, in fact, a function. That is,
+\begin{align*}
+    (a,b_1) \in M \txt{ and } (a,b_2) \in M \Rightarrow b_1 = b_2
+\end{align*} 
+Nonuniqueness is to say that $M$ is not a function. This intutively means that our model is poor.
+\subsubsection{Continuous Dependence on Data}
+\q{Data} in this context really means \q{parameter space}. For example, these could be initial conditions, physical parameters such as diffusivity of a chemical species, variance of noisy input to a stochastic differential equation, hyperparameters for a neural network, etc. Given that we cannot \q{see} all of parameter space, we would like small perturbations in parameter space to lead to only small perturbations in output space. Consider a model $F:(P,\|\cdot\|_P) \to (O, \|\cdot\|_{O})$ defined on normed vector spaces. We say that $F$ \textit{ depends continuously on data } if and only if for any sequences of parameters $p_{n}$,
+\begin{align} \label{1:cdd}
+    p_n \overset{P}{\to} p \Rightarrow F(p_n) \overset{O}{\to} F(p).
+\end{align}
+For example, consider $F:(\R^{n}, \|\cdot\|_{2}) \to (\R^{n}, \|\cdot\|_{2})$ by 
+\begin{align}\label{1:matinv}
+    F(\bs{b}) = \bs{x} \Leftrightarrow A\bs{x} = \bs{b}
+\end{align}
+for some full-rank matrix $A \in \R^{n \times n}$. Then perturb in parameter space to see
+\begin{align*}
+    & A(\bs{x} + \bs{\delta x}) = \bs{b} + \bs{\delta b} \\
+    &\Rightarrow \bs{\delta x} = A^{-1} \bs{b} \textup{    } (A \txt{ is invertible.}) \\
+    &\Rightarrow \|\bs{\delta x}\|_{2} \leq \|A^{-1}\|_{2} \|\bs{\delta b}\|_{2}
+\end{align*}
+\section*{Problems}
+\addcontentsline{toc}{section}{Problems}
+%
+% Use the following environment.
+% Don't forget to label each problem;
+% the label is needed for the solutions' environment
+\iffalse
+\begin{prob}
+\label{prob1}
+A given problem or Excercise is described here. The
+problem is described here. The problem is described here.
+\end{prob}
+
+\begin{prob}
+\label{prob2}
+\textbf{Problem Heading}\\
+(a) The first part of the problem is described here.\\
+(b) The second part of the problem is described here.
+\end{prob}
+\fi
+
+%\input{author/references}

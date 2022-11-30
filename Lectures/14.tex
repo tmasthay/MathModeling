@@ -1,0 +1,42 @@
+\chapter{Lecture 14}
+We cover wellposedness in this lecture. As a review, we consider a problem well-posed whenever (a) solutions exist, (b) solutions are unique, and (c) solutions depend continuously on initial conditions.
+
+\section{Wellposedness of ODEs}
+Consider the simple ODE below.
+\begin{ceqn} \label{eqn:14:ODE}
+y'(t) &= f(y(t)) & t \in (0,T) \\
+y(0) &= y_0.
+\end{ceqn}
+The wellposedness of this problem depends on the forcing function $f$. For example, whenever $f(y) = 2\sqrt{y}$, solutions exist but are not unique. If we take $y_0 = 0$, we see that $y(t) \equiv 0$ and $y(t) = t^2$ both solve Equation \eqref{eqn:14:ODE}. In general, $f$ Lipschitz is a sufficient condition for wellposedness and can be shown Picard iteration. Here, we outline the proof of showing continuous dependence on data. To prove this, we need Gronwall's inequality, stated below.
+\begin{lemma}{(Gronwall's Inequality)} \label{thm:14:gronwall}
+Let $u$ and $\beta$ be continuous on an interval $I$ which contains its infimum. Suppose $u$ is differentiable on $I^{0}$, the interior of $I$, and satisfies the differential inequality 
+\begin{align} \label{eqn:gronwall}
+u'(t) \leq \beta(t) u(t)
+\end{align}
+on $I^{0}$. Then for all $t \in I$,
+\begin{align}
+    u(t) \leq u(a) \int_{a}^{t} \beta(s) ds
+\end{align}
+\end{lemma}
+\begin{theorem}
+If $f$ is Lipschitz continuous, then solutions to Equation \eqref{eqn:14:ODE} depend continuously on the initial condition.
+\end{theorem}
+\begin{proof}
+Let $y$ solve Equation \eqref{eqn:14:ODE} with initial condition $y(0) = y_0$ and let $u$ solve Equation \eqref{eqn:14:ODE} with initial condition $u(0) = y_0 - \epsilon$. Then for any $t \in (0,T)$, we have
+\begin{ceqn} \label{eqn:14:derivbound}
+    y'(t) - u'(t) &= f(y(t)) - f(u(t)) \\
+    &\leq |f(y(t)) - f(u(t))| \\
+    &\leq L |y(t) - u(t)|
+\end{ceqn}
+Note that $y(0) - u(0) = \epsilon$. Denoting $E(t) = y(t) - u(t)$, we can thus rewrite Equation \eqref{eqn:14:derivbound} as 
+\begin{ceqn} \label{eqn:14:errinequal}
+     E'(t) &\leq L |E(t)| \\
+     E(0) &= \epsilon
+\end{ceqn}
+Applying Lemma \ref{thm:14:gronwall}, we have for any $t \in [0,T]$
+\begin{ceqn}
+E(t) &\leq \epsilon e^{L(t-a)} \\
+&\leq M \epsilon
+\end{ceqn}
+where $M = e^{LT}$. Therefore, we have continuous dependence in $L^{\infty}$ and thus also all $L^{p}$ norms.
+\end{proof}

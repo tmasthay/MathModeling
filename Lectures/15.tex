@@ -1,0 +1,51 @@
+\chapter{Lecture 15}
+\section{Continuous Depedence on Data}
+
+\section{Sensitivity Analysis}
+Sensitivity analysis gives more information than simply continuous dependence on data. Generally speaking, sensitivity analysis relates specific components of input to their associated outputs. \tcr{This is easiest to see in terms of the SVD (write up later)}. Consider
+\begin{ceqn} \label{eqn:15:sensitive}
+    f(\bs{x} + \Delta \bs{x}) &= \bs{y} + \Delta \bs{y} \\
+    &\approx f(\bs{x}) + \nabla f(\bs{x}) \cdot \Delta \bs{x} + (\Delta \bs{x})^{T} \bs{H}(\bs{x}) \Delta \bs{x}.
+\end{ceqn}
+Matching first-order terms, we have
+\begin{align} \label{eqn:15:firstorderperturb}
+\Delta \bs{y} \approx \nabla f(\bs{x}) \cdot \Delta \bs{x}
+\end{align}
+
+\section{Uncertainty Quantification (UQ)}
+The overarching goal of uncertainty quantification (UQ) is to obtain \textbf{statistical information of solution from statistical information of data}, e.g. expected value, variance, probability density, etc. UQ is typically expressed in the language of probability and statistics. For random variable $X$, we define its cumulative distribution function (CDF) as 
+\begin{align} \label{eqn:15:cdf}
+    F_{X}(x) = \mathbb{P}(X \leq x).
+\end{align}
+Whenever the CDF is differentiable, we denote its derivative as $f_{X}(x)$ and call it its probability density function (PDF). The CDF can also be recovered from the PDF as
+\begin{align}
+F_{X}(x) = \int_{-\infty}^{x} f_{X}(t) dt.
+\end{align}
+
+\subsection{Remark on power of UQ}
+The conditioning of our model can tell us some information for two extremes. That is if we know that our input is distributed by a random variable $X$, then all the condition number can tell us is that our output distribution lies somewhere in $[-K \delta, K \delta]$ where $K$ is our condition number and $\delta$ is the length of the support of $X$, assuming, for simplicity, that the support is compact. UQ seeks to create a complete picture of this mapping from input distribution $X$ to another random variable $Y$ describing the output distribution.
+
+\section{UQ Techniques}
+\begin{itemize}
+    \item Analytic Derivation
+    \item Monte Carlo (sampling)
+    \item Reduced-order modeling
+    \item Reduced basis (expansions, e.g., Karhonnen-Lo\`{e}ve)
+    \item Interval analysis (this is a bit more exotic)
+\end{itemize}
+
+\subsection{Support Estimation}
+Consider the problem of estimating the support of the output density given the support of the input probability density. \tcr{Fill in these details later...main idea is that if you know the range of the inputs, you can deterministically determine when we get nonzero output...note that this is also in a probability 1 sense}. 
+
+\subsection{Analytic Derivations}
+In some circumstances, we can analytically derive the output distribution from the input distribution.
+Suppose that our output is given by 
+\begin{align} \label{eqn:15:uniform}
+Z = X + Y
+\end{align}
+where $X \sim U(0,1)$ and $Y \sim U(0,1)$ are independent inputs. Then we can immediately calculate the PDF of $Z$ as \begin{ceqn} \label{eqn:15:density}
+    f_{Z}(z) &= \int_{-\infty}^{\infty} f_{X}(\xi) f_{Y}(z-\xi) d\xi \\
+    &= z \mathds{I}_{[0,1]}(z) + (2-z) \mathds{I}_{(1,2]}(z)
+\end{ceqn}
+where $I$ is the indicator function.
+

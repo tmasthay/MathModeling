@@ -1,0 +1,149 @@
+\chapter{Lecture 7: Unsupervised Learning and Model-to-Model Maps}
+\section{Unsupervised Learning}
+Unsupervised learning learns patterns from unlabeled data. An example problem for unsupervised learning is clustering into two classes. 
+\begin{figure}
+    \centering
+    \includegraphics{images/x.pdf}
+    \caption{Insert picture here showing two clearly differently clustered pieces of data but which are unlabelled.}
+    \label{fig:cluster}
+\end{figure}
+Consider clustering our data $\{\bs{x_{j}}\}_{j=1}^{J} \subseteq \mbb{R}^{n}$ into clustering partitions $\mc{J}_1, \mc{J}_2$, i.e. $\mc{J}_{1} \cap \mc{J}_{2} = \empty$ and $\mc{J}_{1} \cup \mc{J}_{2} = \{1,..,J\}$. We can cluster according to an associated center for each cluster, say $\bs{y}_{1}, \bs{y}_{2}$ respectively. Define $\mc{M} := \{(m_1,m_2,...,m_J)^{T}:m_i \in \{1,2\} \tu{ for each } i\}$ telling us which cluster we place each data point $\bs{x}_{j}$. Let
+\begin{align} \label{eqn:clusterloss}
+    \mc{L}(\bs{y}_1, \bs{y}_2, \bs{m}) := \sum_{j=1}^{J} |\bs{x}_{j} - \bs{y}_{m_j}|^2
+\end{align}
+and the associated optimization problem
+\begin{align} \label{eqn:optimalcluster}
+    (\bs{y}_1^{*}, \bs{y}_{2}^{*}, \bs{m}^{*}) = \argmin{\bs{y}_{1}, \bs{y}_{2}, \bs{m}} \mc{L}(\bs{y}_1, \bs{y}_{2}, \bs{m}).
+\end{align}
+Note that Equation~\ref{eqn:optimalcluster} is a nonlinear integer programming problem and is thus NP-hard. Therefore, we seek to solve this problem with an ANN. To do this, we simply define a piecewise optimization problem. Define
+\begin{align}
+    \mc{G}(\bs{m}) = \argmin{\bs{y}_1, \bs{y}_2} \mc{L}(\bs{y}_1, \bs{y}_2, \bs{m}).
+\end{align}
+Consider now a neural network with \textbf{continuous} parameters $\bs{p}$. We can simply define the first hidden layer to create a map $\bs{m} = \bs{m}(\bs{p})$ that enforces $\bs{m} \in \mc{M}$. Since the parameters $\bs{p}$ are continuous, gradients can be computed, and we can thus use gradient descent on the ANN. In total, we recover $\bs{p}^{*}$ such that
+\begin{align*}
+    \bs{p}^{*} = \argmin{\bs{p}} \mc{G}(\bs{m}(\bs{p}))
+\end{align*}
+which implicitly recovers the clustering $\bs{m}$. This framework can be generalized to several clusters \tcr{ and is left as an exercise for the reader.} As a remark, we could change the optimization to not rely on guessing a mean of the cluster but rather to directly compare with other candidate data points in the cluster. We would just change our misfit function to
+\begin{align*}
+    \mc{L}(\bs{m}) := \sum_{j=1}^{J} \sum_{i \neq j} \delta_{m_i,m_j} |\bs{x}_{j} - \bs{x}_{i}|^{2}
+\end{align*}
+and proceed similarly with an ANN.
+
+\section{Normalization of Input Data}
+Consider an ANN with sigmoid activation function. If we know that the domain our input is always large, then our sigmoid effectively collapses to a Heaviside function. This will lead to the vanishing gradient problem. To circumvent this problem, we can rescale with a diagonal scaling $\bs{x} \mapsto \bs{D} \bs{x}$ for diagonal $D$. Another context may be a low-pass filter. That is $\bs{x} \mapsto \underbrace{\bs{F}^{-1}}_{\tu{inv. FFT}} \underbrace{\bs{D}}_{diag.} \underbrace{\bs{F} \bs{x}}_{\tu{FFT}}$ where $\bs{D}$ is constructed to cut out high frequency data in the Fourier domain before inverting back to the original domain.
+\begin{figure}
+    \centering
+    \includegraphics{images/x.pdf}
+    \caption{Scaling never hits middle of sigmoid, so it is basically a Heaviside.}
+    \label{fig:sigmoid}
+\end{figure}
+
+\section{Remark on Deterministic Stochastic Gradient Descent (SGD)}
+As a review of SGD, consider a misfit of the form
+\begin{align} \label{eqn:sgdsum}
+J(\bs{p}) = \sum_{j \in \mc{S}} \chi(\bs{p}).
+\end{align}
+Stochastic gradient descent has a step scheme of the form
+\begin{align} \label{eqn:sgdstep}
+    \bs{p}_{n+1} = \bs{p}_{n} - \eta_{n} \nabla \tilde{J}_{n}(\bs{p}_{n})
+\end{align}
+where 
+\begin{align} \label{eqn:sgdtilde}
+    \tilde{J}_{n}(\bs{p}) = \sum_{j \in \mc{S}_{n}} \chi(\bs{p}_{n}).
+\end{align}
+In~\ref{eqn:sgdtilde}, $\mc{S}_{n} \subseteq \mc{S}$ is a randomly selected subset of $\mc{S}$. Note that we can generalize this procedure to misfit functions that may not be of the form of Equation~\ref{eqn:sgdsum}. 
+\begin{align}
+    \bs{p}_{n+1} = \bs{p}_{n} - \eta_{n} \nabla J(\bs{p}_{n}) + \bs{r}_{n}
+\end{align}
+where $\bs{r}_{n}$ is a random perturbation. The random perturbation can help move bias the step away from local minima and hopefully increase the chance of reaching a global minimum. \tcr{Ask Bj\"{o}rn if this is sufficient motivation here.}
+
+\begin{figure}
+    \centering
+    \includegraphics{images/x.pdf}
+    \caption{Insert global optimization figure here.}
+    \label{fig:sgddeterministic}
+\end{figure}
+
+\section{Mapping Models to Models}
+So far, we have covered two pipelines to generate models. 
+The first was starting with logic and/or science to create a set of governing equations to describe our model, e.g. the derivation of a partial differential equation. 
+The second was the data-driven approach where we started with data and generated a model from it, e.g. linear regression or an ANN. Yet another approach is to generate another model given an original starting model. This ``model to model'' approach largely falls into two classes of approaches, namely \textbf{asymptotic analysis} and \textbf{projection-based methods}. 
+
+\tbf{Asymptotic analysis} starts with a given model and seeks to generate a new model by viewing its behavior in extreme cases, i.e. in the ``asymptotic regime.'' Generally, this asymptotic model approximates the original model from which it came. Examples of asymptotic analysis that we will explore are perturbation methods, averaging of dynamical systems, and homogenization. Perturbation methods rely on mapping a model of the form
+\begin{align} \label{eqn:genmodel}
+    \mc{F}(\bs{p}, u(\bs{p})) = 0
+\end{align}
+to one of the form
+\begin{align} \label{eqn:modelperturb}
+    \mc{F}(\bs{p}, \bs{u}^{\epsilon}(\bs{p})) + \mc{G}(\bs{p}, \bs{u}^{\epsilon}(\bs{p}), \epsilon) = 0
+\end{align}
+where $\epsilon$ is the scale of the perturbation. \tcr{Explanation of averaging of dynamical systems}. Homogenization relies on a discrete approximation to the parameter fields, typically through some local averaging of the parameters, and then takes the limit as the number of layers goes to infinity. Homogenization transforms \eqref{eqn:genmodel} to an equation of the form
+\begin{align} \label{eqn:homogen}
+\mc{F}(\tilde{\bs{p}}, \tilde{\bs{u}}(\tilde{\bs{p}})) = 0.
+\end{align}
+Say that \eqref{eqn:genmodel} is posed on domain $\Omega$ and we partition $\Omega = \cup_{n=1}^{N} \Omega_{n}$. If we use local averaging for the map $\bs{p} \mapsto \tilde{\bs{p}}$, then we have for any $\bs{x} \in \Omega_{n}$ that
+\begin{align} \label{eqn:homogenmap}
+\tilde{\bs{p}}(\bs{x}) = \frac{1}{|\Omega_n|} \int_{\Omega_n} \bs{p}(\bs{x}) d\bs{x}.
+\end{align}
+\tbfr{Double check with Bjorn...it seems like perturbation theory as I have presented here might be homogenization theory according to Wikipedia. Also double check ``asymptotic analysis'' as the term...it is used in CS to mean ``big O'' notation also.}
+
+\tbf{Projection-based methods} seek to find a projection of the solution to model of the form \ref{eqn:genmodel} into a lower-dimensional subspace of the vector space in which the solution $\bs{u}$ lives. The overall aim for this is to lower the computational complexity either in terms of time to solution, memory allocation, or both. Examples of projection-based methods that we will explore are proper orthogonal decomposition (POD) and wavelet compression. POD involves performing principal component analysis of a matrix equation that describes the solution $\bs{u}$ in a basis. After computing the eigenvalues and eigenvectors, we can truncate eigenvectors associated with the smallest eigenvalues to recover a reduced-order representation of our solution $\bs{u}$. Similarly, wavelet compression seeks to approximate our solution $\bs{u}$ in a wavelet basis with very few samples, even if infinitely many need to be extracted to \textit{exactly} recover $\bs{u}$. Wavelet compression is used, for example, to compress images in the JPG format. The computational cost and memory savings are quite substantial. A TIFF file is a lossless data format that stores all pixel values explicitly. Try converting a JPG file into a TIFF file and then downloading that TIFF file; it will take quite a long time, whereas the JPG download will be nearly instantaneous. For now, we hold off on more in-depth discussion of projection-based methods for a later lecture and proceed to asymptotic methods, namely perturbation methods.
+
+\subsection{Perturbation Methods}
+There are two types of perturbations, \tbf{regular} and \tbf{singular} perturbations. We will explain the difference through an example, beginning with a regular perturbation. Consider the following BVP on interval $I=[0,1]$.
+\begin{ceqn} \label{eqn:laplacianperturb}
+    &u_{xx}^{\epsilon} - \epsilon u_{x}^{\epsilon} = 0 \\
+    &u^{\epsilon}(0) = 0 \\
+    &u^{\epsilon}(1) = 1.
+\end{ceqn}
+What system does \eqref{eqn:laplacianperturb} represent in the limit as $\epsilon \to 0$? Formally, we can simply take $\epsilon \to 0$ on both sides of the equation to get the new BVP below.
+\begin{ceqn} \label{eqn:laplacian}
+& u_{xx} = 0 \\
+& u(0) = 0 \\
+& u(1) = 1.
+\end{ceqn}
+Note that the \eqref{eqn:laplacian} is simply Laplace's equation in one dimension, and the solution can be seen by inspection as $u(x) = x$. For \eqref{eqn:laplacianperturb} to ``represent'' \eqref{eqn:laplacian} in the small $\epsilon$ limit, we really mean that $u^{\epsilon} \to u$ as $\epsilon \to 0$, which we now verify. Using classical techniques from an intro to ODEs class, we get that the solution of \eqref{eqn:laplacianperturb} is 
+\begin{align}
+    u^{\epsilon}(x) = \frac{e^{\epsilon x} - 1}{e^{\epsilon} - 1}. 
+\end{align}
+Applying L'H\^{o}pital's rule once, we see that
+\begin{align} \label{eqn:laplaceconverge}
+\lim_{\epsilon \to 0} u^{\epsilon}(x) = x = u(x)
+\end{align}
+as desired. Notice in \eqref{eqn:laplacianperturb}, $\epsilon$ is applied to the \textit{lower order term}. Therefore, when we formally took $\epsilon \to 0$ in \eqref{eqn:laplacianperturb} to find our target BVP \eqref{eqn:laplacian}, \textit{the order of the limiting equation remained the same as the perturbed equation}. Therefore, the number of boundary conditions to make the limiting equation well-posed \textit{also remained the same}. This preservation is the sense in which we apply to the term ``regular'' to ``regular perturbation.'' If we were to place $\epsilon$ on $u_{xx}$ term, then the perturbed equations needs two boundary values to be well-posed, but the limiting equation only needs one! This sort of situation would be a singular perturbation. Furthermore, if the limiting equation only needs one boundary condition, which would do we choose? We now explore this and show that the answer to the previous question depends on the sign of the perturbation that we have. Consider 
+\begin{ceqn} \label{eqn:laplacianperturbhigher}
+&\epsilon u_{xx}^{\epsilon} - u_{x}^{\epsilon} = 0 \\
+& u^{\epsilon}(0) = 0 \\
+& u^{\epsilon}(1) = 1.
+\end{ceqn}
+Taking the limit as $\epsilon \to 0$ again formally, we expect a limiting equation of the form
+\begin{ceqn} \label{eqn:constantwrong}
+& -u_{x} = 0 \\
+& u(0) = 0 \\
+& u(1) = 1.
+\end{ceqn}
+However, this time we keep in mind that we need to throw one boundary condition out since our higher order term dropped out. Note that the need to drop one boundary condition is made even more clear in this case since the solution $u$ of \eqref{eqn:constantwrong} must be constant. To answer which boundary condition needs to be dropped, note that the solution to the perturbed equation is given by
+\begin{align} \label{eqn:laplacianperturbhighersoln}
+u^{\epsilon} = \frac{e^{\frac{x}{\epsilon}} - 1}{e^{\frac{1}{\epsilon}} - 1}.
+\end{align}
+We also have
+\begin{ceqn} \label{eqn:laphighlimit}
+\lim_{\epsilon \to 0} \frac{e^{\frac{x}{\epsilon}} - 1}{e^{\frac{x}{\epsilon} - 1}} &= \lim_{\alpha \to \infty} \frac{e^{\alpha x} - 1}{e^{\alpha} - 1} \\
+&= \lim_{\alpha \to \infty} \frac{e^{\alpha x}}{e^{\alpha}} \\
+&= \lim_{\alpha \to \infty} e^{-\alpha (1-x)} = \begin{cases}
+1 \tu{ if } x = 1 \\
+0 \tu{ otherwise}
+\end{cases}.
+\end{ceqn}
+Since this limit is zero at all but one point, we drop the boundary condition at $x=1$. This leads finally to IVP
+\begin{ceqn}
+    & -u_{x} = 0 
+    & u(0) = 0
+\end{ceqn}
+as our limiting equation.
+
+
+
+
+
+

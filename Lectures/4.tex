@@ -1,0 +1,151 @@
+\chapter{Lecture 4}
+For this lecture, we cover a few science-based models.
+
+\section{PDE-based models}
+A PDE-based model is simply any model that can be written as the solution to a partial differential equation (PDE). 
+We consider below advection, diffusion, and exponential growth, which can all be model through a PDE. 
+
+Advection models the movement of a bulk quantity, e.g., a pollutant, wind, or water, due to its associated velocity field. An example application is meteorology where multiple variables of interest, such as humidity and temperature, are predicted as a function of time. The advection equation is given below.
+
+% \begin{empheq}[box=\tcbhighmath]{equation}
+% \begin{aligned}
+%  \textbf{Advection equation} \\
+%  \frac{\partial u}{\partial t} + \bs{v} \cdot \nabla u = 0
+% \end{aligned}
+% \end{empheq}
+
+\cbeqn{Advection Equation}{
+    \frac{du}{dt} = \frac{\partial u}{\partial t} + \bs{v} \cdot \nabla u = 0 \label{eqn:4:advection}
+}
+where $u=u(\bs{x},t)$ is the quantity of interest such as temperature, and $\bs{v}$ is the velocity field of $u$ in the Eulerian description. 
+
+Diffusion models species that move from areas of higher concentration to lower concentration. This movement is caused by the fact that interactions between species cause random movement that prevents movement towards areas of higher concentration. Inversely, areas of low concentration have low probability of collisions between species, allowing for a net flow of the species towards areas of low concentration. 
+
+\cbeqn{Diffusion Equation}{
+    \frac{\partial u}{\partial t} = C \frac{\partial^2 u}{\partial x^2} \label{eqn:4:diffusion}
+}
+
+where $u$ is the quantity of interest, e.g., the concentration of a chemical species, and $C$ is a diffusion constant. The diffusion constant informs how quickly diffusion occurs. 
+
+Finally, a simple model for exponential growth and its relevance to modeling infectious disease is given below.
+
+\cbeqn{Exponential Growth}{
+    \dot{S}(t) = C S(t) \label{eqn:4:expgrowth}\\
+    C > 0 \nonumber
+}
+
+Exponential growth is  crude model for population growth where $C > 0$ determines how fast the population grows.
+For models of infectious disease, this value $C$ is often referred to as the $R_0$ value\footnote{This assumes that the expected time of contagiousness is a unit of $1$, i.e., we could simply change our coordinate system to $t$ \to $\tau=t / t_0$ for characteristic timescale $t_0$. For example, me might expect an infected individual to infect $3$ people ($R_0=3$), but how long does it take for this spread to occur? It could take $14$ days or possibly $2$ days. We still expect the same asymptotic behavior of the solution in either case, but the spread is much faster in the latter case. With our crude model, the former case of $14$ days would infect the entire human population in approximately 290 days compared to the latter case which would do so in less than $42$ days!}. 
+In expectation, a given infected individual infects $R_0$ people. Whenever $R_0 > 1$, we will observe exponential growth, and when $R_0 < 1$, we will observe exponential decay. 
+The $\alpha$ variant of COVID-19 had an estimated $R_0$ value between $2$ and $3$. Vaccination and social distancing are measures whose ultimate goal is to push $R_0$ below $1$ to hopefully eradicate the disease, if possible.
+We now discuss a few model inadequacies of this crude model. 
+First of all, we have not accounted for the total population from which the disease can propagate; our output should never exceed this value. The omicron variant of COVID-19 is contagious for approximately $6$ days for an infected invidiual with an $R_0$ value of $7.0$, which would predict the entire human population becoming infected in about $70$ days! Of course, this was not the case. As of writing this in spring 2022, approximately $40$ percent of the United States still has never been infected with COVID-19.
+Another model inadequacy is the fact that the vulnerable population (number of people who \textit{can} become infected) changes over time. (a) Recovered individuals can build immunity, and (b) the disease can mutate, possibly lowering the immunity mentioned in (b), (c) The disease can cause deaths, and (d) people are born during the propagation of the disease. News coverage of COVID-19 focused largely on effects (a) and (b) because the mortality rate of COVID-19 is not high enough to cause a global population decline
+\footnote{However, on a local level, this effect may be significant. For example, in West Virginia, the diabetes rate is high, around $15\%$. Since diabetes increases risk of death from COVID-19, it may be worth considering this effect for a local model for regions where we expect a higher mortality rate from the disease.}. 
+However, for extremely deadly infections such as ebola ($\approx50\%$ mortality rate), smallpox ($\approx 30\%$ mortality rate), or bubonic plague ($\approx 30-60\%$ mortality rate), the total population can change \textit{drastically} and thus the effects from (c) and (d) become essential. 
+Another inadequacy is that this model ignores the inherently probabilistic nature of disease spread and how social behavior affects this probability. 
+A more complete model would be an \textbf{agent-based model}. Each individual in a population is an agent that can propagate the disease. Individuals interact with each other on a day-to-day basis, and each interaction has some probability of propagation depending on how close they are to each other, how long they spend together, whether they are friends or strangers, etc. 
+Monte Carlo simulations can then give us a more complete picture of best and worst case scenarios, as well as help inform the effect of public policies on infection spread. 
+An agent-based model based on social network connectivity is what originally led to the Bush administration suggesting closing schools to prevent the spread of infection for the ``National Strategy for Pandemic Influenza'' (\cite{glass2006targeted}, \cite{lewis2021premonition}, \cite{homeland2005national}). 
+
+\section{Discrete Models}
+An example of a discrete model is a discrete Markov chain\footnote{Note that continuous Markov chains also exist.}. A Markov chain is a stochastic process that describes a sequence of events whose probability depends only on the previous state. That is,
+\begin{align}
+    \mathbb{P}(X_n=x_n | X_{n-1}=x_{n-1},...,X_0=x_0) = \mathbb{P}(X_n=x_n | X_{n-1}=x_{n-1}).
+\end{align}
+Note that discrete Markov chains can be represented with a graph that represents transitions between states. An example is shown in Figure \ref{fig:markov}.
+\begin{figure}
+    \centering
+    \includegraphics{images/x.pdf}
+    \caption{Simple Markov chain}
+    \label{fig:markov}
+\end{figure}
+Graphs can be used to model many different processes, including traffic flow, connections in social networks, or computer architectures. \tcr{Catenary model}
+
+\section{Linking Discrete and Continuum Models}
+\subsection{Continuum to Discrete}
+A simple example of a continuum to discrete model is to consider a PDE. We cannot generally extract exact solutions to PDEs, so we usually resort to approximating our true solution $u(\bs{x})$ by a discrete set of points $u_1\approx u(\bs{x}_1),...,u_N\approx u(\bs{x}_N)$. As an example, consider the ODE
+\begin{ceqn} \label{eqn:simpleode}
+    u'(x) &= f(x) \hspace{10pt} x \in (0,1)\\
+    u(0) &= \alpha.
+\end{ceqn}
+For continuous $f$, this equation has a solution of 
+\begin{ceqn}
+u(x) = \alpha + \int_{0}^{x} f(t)dt.
+\end{ceqn}
+A simple approximation to this is to set $\Delta x = \frac{1}{N}$, $x_n = \frac{n}{N}$, $u_0 = \alpha$, and for $1 \leq n \leq N$, 
+\begin{ceqn} \label{eqn:dirint}
+u(x_n) \approx u_n = \alpha + \frac{\Delta x}{2} \sum_{k=0}^{n} \left[f(x_k) + f(x_{k-1})\right].
+\end{ceqn}
+Note that Equation \ref{eqn:dirint} leads to the midpoint formula
+\begin{ceqn}
+u_n = u_{n-1} + \frac{\Delta x}{2}\left[ f(x_n) + f(x_{n-1}) \right].
+\end{ceqn}
+Given any value $x \in [0,1]$, we can rewrite $x = t x_{n-1} + (1-t) x_{n}$ for some $n$ and $t \in [0,1]$. We define $\tilde{u}_{\Delta x}(x) = t u_{n-1} + (1-t) u_{n}$\footnote{This is linear interpolation between the nodes which is the simplest kind of interpolation. We note that more complicated interpolations can be used.}
+For whatever scheme we use to obtain $\tilde{u}_{\Delta x}$, we require that said scheme is \textbf{consistent}. That is,
+\begin{ceqn}
+\lim_{\Delta x \to 0} \| \tilde{u} - u \| = 0
+\end{ceqn}
+for some norm $\|\cdot\|$. Some examples of norms are $\|\cdot\|_{\infty}$, $\|\cdot\|_{L^1}$, or $\|\cdot\|_{L^2}$.
+\subsection{Discrete to Continuum}
+Come up with example here.
+
+\section{Data-Driven Models}
+We begin with the main differences between data-driven models and science-based models.
+\begin{itemize}
+    \item Number of parameters (Data-driven $\ll$ Science)
+    \item Data-driven parameters often have no scientific meaning
+    \item Data-driven models have fixed model structure
+\end{itemize}
+We note that these differences are not strict. For example, science-based models, of course, need data, and data-driven models must be chosen to fit the application at hand.
+
+Our first example will be \textbf{linear regression}. 
+That is, given input $\bs{x}$ and output $\bs{b}$, predict linear map $\bs{A}$ such that
+\begin{align} \label{eqn:axb}
+\bs{A} \bs{x} = \bs{b}
+\end{align}
+with $\bs{x} \in \R^{n}$, $\bs{b} \in \R^{m}$, and $\bs{A} \in \R^{m \times n}$. Define
+\begin{align*}
+    \bs{B} &= \begin{bmatrix}
+    \bs{b}_1,...,\bs{b}_{J}] 
+    \end{bmatrix} \\
+    \bs{X} &= \begin{bmatrix}
+    \bs{x}_{1}, ..., \bs{x}_{J}
+    \end{bmatrix}.
+\end{align*}
+That is, we have $J$ samples of input and output. Consider just the case when $m=n$. If $J=n$, then we can simply select
+\begin{align} \label{eqn:exactlinreg}
+\bs{A} = \bs{B} \bs{X}^{-1}
+\end{align}
+as long as the inputs $\bs{x}_{j}$ are selected in a linearly independent fashion. If $J > n$, we have an overdetermined system and instead solve the problem
+\begin{align} \label{eqn:overdetlinreg}
+    \underset{\bs{A}}{\textup{min}}\textup{ }\|\bs{A}\bs{X} - \bs{B}\|_{2}^{2}
+\end{align}
+which has solution (from the normal equations)
+\begin{align}
+    \bs{A} = \bs{B} \bs{X}^{T} \left(\bs{X} \bs{X}^{T}\right)^{-1}.
+\end{align}
+
+Another example is a data-driven approach to solving for PDE model parameters. In particular, we look at our simple model of the spread of infectious disease. We solve for $\bs{u}(t)=[S(t) I(t) R(t)]^{T}$ where $S(t),I(t),R(t)$ are the number of susceptible, infected, and recovered people at time $t$. Our model for infectious disease spread is given by
+\begin{ceqn} \label{eqn:infect}
+    \frac{d\bs{u}}{dt} &= \bs{C} \bs{u}(t) \\
+    \bs{u}(0) &= P_0 \bs{e}_{1}
+\end{ceqn}
+for a matrix $\bs{C}$ with entries $C_{ij}$ and initial population $P_0$. We consider a discrete solution $\bs{u}_{j} \approx \bs{u}(t_j)$ on grid $t_1,..,t_N$. Then our problem in this context is
+\begin{align}
+    \underset{\bs{C}}{\textup{min }} \sum_{j=1}^{N} \|\bs{u}(t_j) - \bs{u}_{j}\|_{2}^{2}
+\end{align}
+\askbjorn{Refinement note}
+
+\section{Remarks on Machine Learning}
+We consider today just four topics of machine learning. They are artificial intelligence (AI), machine learning (ML), artificial neural networks (ANN), and deep learning (DL). It is important to note the following relationships
+\begin{align*}
+    DL \subseteq ANN \subseteq ML \subseteq AI
+\end{align*}
+where all subset relations are \textit{strict}. The main distinction between AI and ML is that AI implies generalizability of a machine to domains with which the machine is not trained. This is often simply referred to as ``creativity.'' Neural networks today can do quite complex tasks, but they do not achieve what is often referred to as ``AI.'' Whether true AI can be achieved is still an active area of debate within the community.
+
+\subsection{Artificial Intelligence}
+AI was initially science based, and its main task was machine translation. 
+
+\subsection{ANN}
+Artificial neural networks attempt to mimic a human brain. A brain is a series of neurons connected together via axons. These axons carry electrical energy and provide a signal from one neuron to the next. The complicated movement of electricity creates thoughts, coordinates movements, performs subconscious tasks such as digestion, and many other essential functions. Similarly, ANNs can be thought of as a graph with weights, biases, and activation functions. The edge with the associate weight, bias, and activation function mimics the role of the axon which carries a signal from one neuron to the next. The nodes of the graph representing an ANN represent the neurons. An ANN starts with an input layer and ends with an output layer, and can to a certain degree, be treated like a black box.

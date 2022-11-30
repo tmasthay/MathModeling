@@ -1,0 +1,89 @@
+\chapter{Lecture 9: Averaging of Dynamical Systems and Homogenization}
+\section{Averaging of Dynamical Systems}
+A more general system for averaging of dynamical systems from last lecture is the following system.
+\begin{ceqn} \label{eqn:genavg}
+u_{t}^{\epsilon} &= f(u^{\epsilon}, v^{\epsilon}) \\
+v_{t}^{\epsilon} &= \frac{1}{\epsilon} g(u^{\epsilon}, v^{\epsilon}). 
+\end{ceqn}
+This gives a solution
+\begin{align} \label{eqn:gensoln}
+    u_{t} = F(u) = \int f(u,v) d\mu
+\end{align}
+where $\mu$ is an invariant \tcr{ in some sense...check with Bjorn.} As a remark, this form also generalizes to stochastic differential equations with adding $g \to g + c(u) dW$. Also, under the condition that $f$ is $T$-periodic,
+\begin{align}
+    u_{t} = \frac{\epsilon}{T} \int_{0}^{T} f(u,t,0) dt
+\end{align}
+\tcr{Is $\epsilon$ a characteristic scale? Why should the limiting solution depending on $\epsilon$? Bjorn will check on this.}
+\subsection{Boosting}
+$u^{\epsilon} \to u$ as $\epsilon \to 0$, but as $\epsilon \to 0$, we may induce extreme oscillatory behavior of the solution. These oscillations make recovery of the solution numerically difficult. Therefore, we have a tradeoff between these two factors so that we do not have to take extremely small time steps $\delta t \ll \epsilon$ in order to recover the solution. Some examples of this are the Car-Parinello method for molecular dynamics, added viscosity for the advection-diffusion equation, and the Kapitza pendulum. The Car-Parinello method artificially ``increases the mass of electrons'', which may be fine, but does not work for all molecules. As for the advection-diffusion equation, we can introduce an artificial viscosity  $\epsilon$ in the form
+\begin{align} \label{eqn:advec}
+    u_{t} + u_{x} = \epsilon u_{xx}.
+\end{align}
+For complex problems, this can be risky because the artificial viscosity term effectively changes the Reynolds number of the system of interest. This could mean you enter a turbulent regime when your true system should remain laminar. \tcr{It seems to me like there isn't an artificial viscosity term here...this just looks like a normal advection-diffusion equation with diffusivity constant $\epsilon$.} The Kapitza pendulum is an inverted pendulum which has an unstable equilibrium point at $\theta = 0$. If we drive the pendulum vertically, then we can stabilize this equilibrium point. This leads to a system of the form
+\begin{align}
+    \ddot{\theta} = \left(D\omega^2cos(\omega t) - \frac{D}{l}\right) sin(\theta).
+\end{align}
+Here, there is a critical value for $\omega$ that will stabilize the equilibrium position, similar to how Reynolds number creates a critical regime for turbulence.
+\section{Homogenization}
+Homogenization can be thought of as an ``oscillation in space'' for many applications. \tcr{Check with Bjorn on this statement, if we want to expand...his example shows the oscillation in space, but does it ALWAYS require periodicity for homogenization to be applicable?}
+
+As an example, consider an elliptic problem of the form
+\begin{ceqn} \label{eqn:9:ellipeps}
+& - \nabla \cdot (a(\bs{x},\frac{\bs{x}}{\epsilon}) \nabla u^{\epsilon}) = f(\bs{x}) \\
+& + (\tu{whatever boundary condition we want here})
+\end{ceqn}
+where $a(x,y)$ is $1$-periodic in $y$, i.e. $a(x,y+1) = a(x,y)$ for all $y$.
+Applications for this type of problem are in composite materials and flow in porous media. Homogenization seeks to map $a(x,\frac{x}{\epsilon}) \to A(x)$ such that solutions $u^{\epsilon} \to u$ where $u$ is given by 
+\begin{ceqn} \label{eqn:elliplimit}
+& -\nabla \cdot (A(\bs{x}) \nabla u(\bs{x})) = f(\bs{x}) \\
+& + \tu{appropriate BC  based on \eqref{eqn:ellipeps}}
+\end{ceqn}
+We now work out the details of a one-dimensional example with $a(x,y) = a(y)$ and homogeneous Dirichlet boundary conditions. That is,
+\begin{ceqn} \label{eqn:homoeps}
+& -\frac{d}{dx}\left( a\left(\frac{x}{\epsilon}\right) \frac{du^{\epsilon}}{dx}\right) = f(x) & x \in (0,1) \\
+& u(0) = u(1) = 0 & 
+\end{ceqn}
+\begin{figure}
+    \centering
+    \includegraphics{images/x.pdf}
+    \caption{Insert oscillatory graphic of $a(\frac{x}{\epsilon})$}
+    \label{fig:homooscil}
+\end{figure}
+We seek a homogenized equation of the form
+\begin{ceqn}
+& -\frac{d}{dx}\left( \tilde{a} \frac{du}{dx} \right) = f & x \in (0,1) \\
+& u(0)=u(1)=0 &
+\end{ceqn}
+where $\tilde{a}$ is an appropriate chosen constant. A natural choice would be to choose $\tilde{a}$ to be the simple average given by
+\begin{align} \label{eqn:constawrong}
+\tilde{a} = \frac{1}{\epsilon}  \int_{0}^{\epsilon} a\left(\frac{x}{\epsilon}\right) dx = \int_{0}^{1} a(\xi) d\xi.
+\end{align}
+However, as we will see, this is an incorrect choice for $\tilde{a}$. Integrate \eqref{eqn:homoeps} once to obtain
+\begin{align} \label{eqn:homoepsint1}
+-a\left(\frac{x}{\epsilon}\right) \frac{du^{\epsilon}}{dx} = \underbrace{C + \int_{0}^{x} f(\xi) d\xi}_{F(x)}.
+\end{align}
+Now simply divide by $a$ and then integrate again to obtain
+\begin{align} \label{eqn:homoepsint2}
+    u^{\epsilon}(x) = -\int_{0}^{x} \frac{F(\xi)}{a\left(\frac{\xi}{\epsilon}\right)} d\xi
+\end{align}
+where we have applied the boundary condition $u(0) = 0$ to get rid of the integration constant. Let $N = \lfloor \frac{x}{\epsilon} \rfloor$. Rewrite \eqref{eqn:homoepsint2} as 
+\begin{align} \label{eqn:homoriem}
+    u^{\epsilon}(x) &= -\underbrace{\int_{N\epsilon}^{x} \frac{F(\xi)}{a\left(\frac{x}{\epsilon}\right)} d\xi}_{g(x,\epsilon)} - \sum_{n=0}^{N-1} \int_{n\epsilon}^{(n+1)\epsilon} \frac{F(\xi)}{a\left(\frac{x}{\epsilon}\right)} d\xi & \nonumber \\
+    &= g(x,\epsilon) - \underbrace{\epsilon \sum_{n=0}^{N-1}\int_{n\epsilon}^{(n+1)\epsilon} \frac{F'(s(\xi))}{a\left(\frac{\xi}{\epsilon}\right)}}_{h(\epsilon)} - \sum_{n=0}^{N-1} F(n\epsilon) \int_{n\epsilon}^{(n+1)\epsilon} \frac{1}{a\left(\frac{x}{\epsilon}\right)} 
+\end{align}
+where $s(\xi)$ is given by the mean-value theorem. Continuing with simple substitution, we have
+\begin{align} \label{eqn:homoriem2}
+u^{\epsilon}(x) &= g(x,\epsilon) - h(\epsilon) + \epsilon \sum_{n=0}^{N-1} F(n\epsilon) \int_{n}^{n+1} \frac{1}{a(\xi)} d\xi \nonumber &\\
+&= g(x,\epsilon) - h(\epsilon) - \underbrace{\left( \int_{0}^{1} \frac{1}{a(\xi)}d\xi\right)}_{\tilde{a}} \sum_{n=0}^{N-1} F(n\epsilon) \epsilon & (a \tu{ is } 1\tu{-periodic}).
+\end{align}
+Now take $\epsilon \to 0$ in \eqref{eqn:homoriem2}. If we assume that $f$ is continuous and $a$ is bounded below, then both $g(x,\epsilon) \to 0$ and $h(\epsilon) \to 0$, which we leave as an exercise for the reader. We  simply note that we only have a Riemann sum left, and thus $u^{\epsilon}$ indeed converges to a limiting function $u$ given by
+\begin{align} \label{eqn:homolimit}
+    u(x) = -\tilde{a} \int_{0}^{x} F(\xi) d\xi.
+\end{align}
+Note further that $u^{\epsilon}(1) = u^{\epsilon}(0) = 0$, so $u(1) = u(0) = 0$ also.
+Differentiating \eqref{eqn:homolimit} twice, we recover the BVP
+\begin{ceqn} \label{eqn:odelimit}
+& -\frac{d}{dx} \left( \tilde{A} \frac{du}{dx} \right) = f(x) \\
+& u(0) = u(1) = 0.
+\end{ceqn}
+where $\tilde{A} = \frac{1}{\tilde{a}}$ is the \tbf{harmonic average} of $a$, rather than the immediate approach of the standard average.
