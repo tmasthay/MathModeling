@@ -9,7 +9,7 @@ Topics covered below.
 3. Machine learning
 4. Reduced-order modeling
 5. Kolmogorov n-width
-6. (...)
+6. (List currently incomplete...will return to this later for more cohesive order)
 
 # Generating the PDF
 The easiest way to generate the pdf is to import this project directly into Overleaf. It uses a template for Springer books that can be found on Overleaf's template page; I may change this in the future. If I do change this, and you prefer a Springer-style format, checkout the initial commit.
