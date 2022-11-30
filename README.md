@@ -15,7 +15,7 @@ Topics covered below.
 Note that this project is still an incomplete set of notes, with roughly 50% coverage as of November 30, 2022.
 
 # Generating the PDF
-A read-only version of this project can be found at https://www.overleaf.com/read/pnfwcgqdhgsv.
+A read-only version of this project can be found at https://www.overleaf.com/read/pnfwcgqdhgsv, and this Overleaf version is synced with this repo.
 
 If you would like to make build this project directly, the easiest way is to import it directly into Overleaf, as this is the only environment under which I have tested this build. The compiler used on Overleaf is pdfLatex.
 
