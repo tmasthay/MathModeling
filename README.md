@@ -13,8 +13,8 @@ All example codes are in the ```code``` directory.
 Please contact me at tyler@oden.utexas.edu or tylermasthay@gmail.com for any suggestions as stated below.
 
 1. Topics you would like to see covered.
-2. Examples with code
-3. Ideas for illustrative problems and/or coding assigments that would augment this course's learning objectives.
+2. Illustrative coding examples you would like to see and/or extensions of these examples for assignments
+3. Illustrative problems that would augment this course's learning objectives.
 4. Typos and errata!
 
 
