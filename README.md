@@ -10,4 +10,5 @@ The easiest way to generate the pdf is to import this project directly into Over
 All example codes are in the \texttt{code} directory.
 
 # Author Contact
-This course has only been taught once, and we welcome any suggestions for (a) what topics you would like to see covered in more detail, (b) examples with code, and/or (c) ideas for illustrative problems and/or coding assigments that would augment this course's learning objectives.
+We welcome any suggestions for (a) what topics you would like to see covered in more detail, (b) examples with code, and/or (c) ideas for illustrative problems and/or coding assigments that would augment this course's learning objectives.
+Please contact me at tyler@oden.utexas.edu or tylermasthay@gmail.com for any suggestions as stated above.
